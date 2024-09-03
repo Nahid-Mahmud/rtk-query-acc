@@ -1,17 +1,27 @@
 import { useNavigate } from "react-router-dom";
-import { useGetPostQuery } from "../../redux/features/api/baseApi";
+import { useGetPostQuery, useSetPostMutation } from "../../redux/features/api/baseApi";
 import { useForm } from "react-hook-form";
 
 const Home = () => {
   const { data: PostData, isLoading, error } = useGetPostQuery();
   const navigate = useNavigate();
-  const { register, handleSubmit, reset } = useForm();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm();
+
+  const [setPost, { isError: mutationError, isLoading: mutationLoading, data: mutationData }] = useSetPostMutation();
 
   const onSubmit = (data) => {
     console.log(data);
-    // reset();
+    if (!data) return;
+    setPost(data);
+    reset();
   };
 
+  console.log(mutationData);
   if (isLoading) return <div className="flex justify-center items-center h-screen">Loading...</div>;
 
   if (error) return <div className="flex justify-center items-center h-screen text-red-500">Error: {error}</div>;
@@ -22,7 +32,7 @@ const Home = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="mb-6">
           <div className="flex items-center">
             <input
-              {...register("postTitle")}
+              {...register("post", { required: "Post title is required" })}
               type="text"
               placeholder="Enter post title"
               className="border p-2 rounded mr-2 flex-grow"
@@ -31,6 +41,7 @@ const Home = () => {
               Add
             </button>
           </div>
+          {errors.post && <p className="text-red-500 mt-2">{errors.post.message}</p>}
         </form>
 
         {PostData.map((post) => (
