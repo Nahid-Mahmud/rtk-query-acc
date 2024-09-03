@@ -10,7 +10,7 @@ const Home = () => {
   return (
     <div className="container mx-auto p-4">
       {PostData.map((post) => (
-        <div key={post.id} className="mb-6 p-4 border rounded shadow-lg hover:scale-105 transition-all duration-300">
+        <div key={post.id} className="mb-6 p-4 border rounded shadow-lg">
           <h1 className="text-2xl font-bold mb-2">{post.title}</h1>
           <p className="text-gray-700">{post.body}</p>
         </div>
